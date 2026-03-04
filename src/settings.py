@@ -1,0 +1,2 @@
+MODELDIR = "models"
+DATADIR = "data"
