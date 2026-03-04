@@ -1,11 +1,15 @@
 import os
 import joblib
 import pandas as pd
+from dotenv import load_dotenv
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
 from xgboost import XGBClassifier
 
 from preprocess import preprocess_data
+
+load_dotenv()
+
 
 DATADIR = os.getenv("DATADIR")
 MODELDIR = os.getenv("MODELDIR")
@@ -42,5 +46,5 @@ if __name__ == "__main__":
     )
     xgb.fit(X_train_bal, y_train_bal)
 
-    xgb.save_model(f"{MODELDIR}/xgb_model.ubj")
+    joblib.dump(xgb, f"{MODELDIR}/xgb_model.pkl")
     joblib.dump((X_test, y_test), f"{DATADIR}/test_data.pkl")
