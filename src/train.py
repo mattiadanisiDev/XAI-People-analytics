@@ -1,3 +1,4 @@
+import os
 import joblib
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -5,7 +6,9 @@ from imblearn.over_sampling import SMOTE
 from xgboost import XGBClassifier
 
 from preprocess import preprocess_data
-from settings import DATADIR, MODELDIR
+
+DATADIR = os.getenv("DATADIR")
+MODELDIR = os.getenv("MODELDIR")
 
 if __name__ == "__main__":
     df = pd.read_csv(f"{DATADIR}/WA_Fn-UseC_-HR-Employee-Attrition.csv")
