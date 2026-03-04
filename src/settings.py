@@ -1,2 +1,0 @@
-MODELDIR = "models"
-DATADIR = "data"
