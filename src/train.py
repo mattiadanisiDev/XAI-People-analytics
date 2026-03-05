@@ -46,5 +46,6 @@ if __name__ == "__main__":
     )
     xgb.fit(X_train_bal, y_train_bal)
 
-    joblib.dump(xgb, f"{MODELDIR}/xgb_model.pkl")
+    xgb_boster = xgb.get_booster()
+    xgb_boster.save_model(fname=f"{MODELDIR}/xgb_model.ubj")
     joblib.dump((X_test, y_test), f"{DATADIR}/test_data.pkl")
