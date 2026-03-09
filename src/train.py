@@ -49,3 +49,4 @@ if __name__ == "__main__":
     xgb_boster = xgb.get_booster()
     xgb_boster.save_model(fname=f"{MODELDIR}/xgb_model.ubj")
     joblib.dump((X_test, y_test), f"{DATADIR}/test_data.pkl")
+    joblib.dump((X_train_bal, y_train_bal), f"{DATADIR}/train_data.pkl")
