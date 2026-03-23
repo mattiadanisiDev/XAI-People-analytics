@@ -49,5 +49,3 @@ Il dataset utilizzato è il noto **IBM HR Analytics Employee Attrition & Perform
 - [SHAP — Lundberg & Lee, 2017](https://github.com/slundberg/shap)
 - [LIME — Ribeiro et al., 2016](https://github.com/marcotcr/lime)
 - [Alibi — Seldon](https://github.com/SeldonIO/alibi)
-- [InterpretML — Microsoft](https://interpret.ml)
-- [Captum — PyTorch](https://captum.ai)
