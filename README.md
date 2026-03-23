@@ -21,10 +21,74 @@ Il dataset utilizzato è il noto **IBM HR Analytics Employee Attrition & Perform
 
 ---
 
-### Download del dataset
+## 🚀 Come eseguire il progetto
+
+### Prerequisiti
+
+- **Python 3.11+**
+- **[UV](https://docs.astral.sh/uv/)** — package manager
+
+### 1. Clonare il repository e installare le dipendenze
+
+```bash
+git clone https://github.com/mattiadanisiDev/XAI-People-analytics.git
+cd XAI-People-Analytics
+uv sync
+```
+
+### 2. Scaricare il dataset
 
 1. Accedere a [Kaggle — IBM HR Analytics](https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset)
 2. Scaricare il file `WA_Fn-UseC_-HR-Employee-Attrition.csv`
+3. Salvarlo nella cartella `data/`
+
+### 3. Configurare le variabili d'ambiente
+
+Creare un file `.env` nella root del progetto:
+
+```
+MODELDIR=models
+DATADIR=data
+```
+
+### 4. Addestrare il modello
+
+```bash
+python src/train.py
+```
+
+Questo script esegue l'intera pipeline: preprocessing, bilanciamento con SMOTE, addestramento XGBoost e salvataggio degli artefatti:
+- `models/xgb_model.ubj` — modello addestrato
+- `data/train_data.pkl` — dati di training (post-SMOTE)
+- `data/test_data.pkl` — dati di test
+
+### 5. Eseguire i notebook
+
+```bash
+jupyter notebook notebooks/
+```
+
+I notebook vanno eseguiti in questo ordine:
+
+| # | Notebook | Descrizione |
+|---|----------|-------------|
+| 1 | `eda.ipynb` | Analisi esplorativa del dataset |
+| 2 | `shap_explanation.ipynb` | Spiegazioni SHAP globali e locali |
+| 3 | `lime_explanations.ipynb` | Spiegazioni LIME locali e confronto con SHAP |
+| 4 | `alibi_counterfactuals.ipynb` | Analisi controfattuale ("cosa dovrebbe cambiare?") |
+
+### 6. Avviare la dashboard interattiva
+
+```bash
+streamlit run src/dashboard.py
+```
+
+La dashboard si apre su `http://localhost:8501` e permette di:
+- Selezionare un dipendente dal test set
+- Visualizzare la probabilità di abbandono e i principali fattori di rischio
+- Generare spiegazioni SHAP (modalità tecnica) o fattori leggibili (modalità HR)
+- Calcolare controfattuali Alibi con azioni consigliate
+
 ---
 
 ## 🧩 Framework XAI utilizzati
