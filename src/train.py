@@ -18,7 +18,7 @@ if __name__ == "__main__":
     df = pd.read_csv(f"{DATADIR}/WA_Fn-UseC_-HR-Employee-Attrition.csv")
     df = preprocess_data(
         df=df,
-        useless_columns=[
+        drop_columns=[
             "EmployeeCount",
             "Over18",
             "StandardHours",
@@ -50,3 +50,7 @@ if __name__ == "__main__":
     xgb_boster.save_model(fname=f"{MODELDIR}/xgb_model.ubj")
     joblib.dump((X_test, y_test), f"{DATADIR}/test_data.pkl")
     joblib.dump((X_train_bal, y_train_bal), f"{DATADIR}/train_data.pkl")
+
+    print(f"Model saved to {MODELDIR}/xgb_model.ubj")
+    print(f"Test data saved to {DATADIR}/test_data.pkl")
+    print(f"Train data saved to {DATADIR}/train_data.pkl")

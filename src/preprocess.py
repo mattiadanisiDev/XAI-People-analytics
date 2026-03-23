@@ -2,9 +2,9 @@ import pandas as pd
 
 
 def preprocess_data(
-    df: pd.DataFrame, useless_columns: list[str], boolean_columns: list[str]
+    df: pd.DataFrame, drop_columns: list[str], boolean_columns: list[str]
 ) -> pd.DataFrame:
-    df.drop(columns=useless_columns, inplace=True)
+    df.drop(columns=drop_columns, inplace=True)
 
     for column in boolean_columns:
         df[column] = df[column].map({"Yes": 1, "No": 0})
