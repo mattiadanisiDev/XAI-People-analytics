@@ -1,0 +1,21 @@
+
+\chapter*{Sommario}
+\addcontentsline{toc}{chapter}{Sommario} 
+
+L'infezione da Papillomavirus Umano (HPV) rappresenta il fattore di rischio primario per lo sviluppo del carcinoma cervicale. La diagnosi morfologica su vetrini istologici digitalizzati (\textit{Whole Slide Images}, WSI) è un processo complesso, ostacolato dalla distribuzione eterogenea del virus nel tessuto e dall'estrema variabilità cromatica dei preparati tra i diversi laboratori. Questa tesi propone una pipeline computazionale basata su Machine Learning per l'identificazione e la classificazione automatizzata di lesioni da HPV.
+
+Per garantire la standardizzazione del dato in ingresso, è stato progettato un rigoroso modulo di pre-elaborazione \textit{vendor-agnostic}, che integra il metodo di Otsu per la segmentazione dello sfondo, la Varianza del Laplaciano per il filtraggio automatico degli artefatti di sfuocatura (\textit{blur}) e l'algoritmo di Macenko per la normalizzazione del colore. 
+
+Il task di classificazione è stato affrontato utilizzando un'architettura convoluzionale ResNet50. Per sopperire alla scarsità di campioni annotati, è stata adottata una strategia di \textit{Transfer Learning} domain-specific, pre-addestrando la rete sul dataset citologico pubblico SIPAKMED. Attraverso l'implementazione di un addestramento in due fasi (\textit{Two-Phase Training}) per preservare le feature morfologiche apprese, l'uso della Focal Loss per gestire lo sbilanciamento delle classi e l'applicazione della \textit{Test-Time Augmentation} (TTA), il modello ha raggiunto un'Area Under the Curve (AUC) media di 0.750 in validazione \textit{Leave-One-Patient-Out} (LOPO). I risultati dimostrano come un'ingegnerizzazione rigorosa del dato istologico possa compensare i limiti dimensionali dei dataset medici, fornendo un efficace strumento di triage e supporto decisionale per la patologia digitale.
+
+\clearpage 
+
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract} 
+
+Human Papillomavirus (HPV) infection is the primary driver of cervical cancer. The morphological diagnosis on digitized histological Whole Slide Images (WSIs) is often challenging due to the virus's patchy distribution within the tissue and the extreme stain variability among different laboratories. This thesis presents a Deep Learning-based computational pipeline for the automated detection and classification of HPV-induced lesions.
+
+To ensure data standardization and model generalization, the workflow integrates a rigorous, vendor-agnostic pre-processing phase. This includes Otsu's thresholding for background segmentation, Laplacian variance for automated blur detection, and Macenko's algorithm for stain color normalization.
+
+The classification task was addressed using a ResNet50 architecture. To mitigate the scarcity of annotated medical data, a domain-specific Transfer Learning strategy was employed, pre-training the network on the SIPAKMED cytological dataset. By implementing a Two-Phase training approach to preserve the pre-learned morphological features, utilizing Focal Loss to handle extreme class imbalance, and applying Test-Time Augmentation (TTA), the proposed model achieved an average Area Under the Curve (AUC) of 0.750 in a Leave-One-Patient-Out (LOPO) cross-validation setup. The findings suggest that a highly engineered data pipeline can effectively offset the dimensional limitations of medical datasets, paving the way for robust morphological triage and decision-support systems in digital pathology.

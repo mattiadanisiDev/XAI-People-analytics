@@ -1,0 +1,164 @@
+\chapter{Fondamenti Teorici e Pre-elaborazione}
+
+\section{Whole Slide Imaging (WSI)}
+
+Le \textit{Whole Slide Images} (WSI) sono il punto di partenza della pipeline. Si tratta di file multi-gigapixel che memorizzano la scansione digitale del vetrino istologico a diversi livelli di ingrandimento (struttura piramidale). 
+
+
+% --- INSERIRE IMMAGINE 1 QUI ---
+
+% File: thumbnail.png (generato da task2_generateJson.py)
+
+\begin{figure}[htbp]
+
+    \centering
+
+    \includegraphics[width=0.7\textwidth]{media/thumbnail}
+
+    \caption{Panoramica di una Whole Slide Image (WSI). La struttura piramidale permette di navigare dal basso ingrandimento fino al dettaglio cellulare.}
+
+    \label{fig:wsi_overview}
+
+\end{figure}
+
+
+Data la dimensione di questi file, l'utilizzo della libreria OpenSlide è fondamentale per estrarre porzioni specifiche senza sovraccaricare la memoria RAM.
+
+
+\section{Segmentazione e Mascheratura del Tessuto}
+
+Gran parte di una WSI è composta da sfondo bianco (vetrino vuoto). Per ottimizzare il calcolo, isoliamo il tessuto tramite una maschera binaria.
+
+
+\subsection{Conversione HSV e Metodo di Otsu}
+
+Inizialmente convertiamo l'immagine dallo spazio colore RGB a quello HSV. Applicando l'algoritmo di Otsu \cite{otsu1979threshold} sul canale della Saturazione, identifichiamo automaticamente la soglia che separa il tessuto dallo sfondo.
+
+
+% --- INSERIRE IMMAGINE 2 QUI ---
+
+% File: otsu_comparison.png (generato da task3_mask.py)
+
+\begin{figure}[htbp]
+
+    \centering
+
+    \includegraphics[width=0.8\textwidth]{media/otsu_comparison.png}
+
+    \caption{Processo di mascheratura: a sinistra la patch originale, a destra l'output binario dell'algoritmo di Otsu.}
+
+    \label{fig:otsu}
+
+\end{figure}
+
+
+\section{Patching e Controllo Qualità}
+
+L'immagine viene suddivisa in migliaia di \textit{patch} (quadratini di dimensione fissa). Tuttavia, non tutte le patch sono utili: alcune potrebbero essere sfocate a causa di errori di scansione.
+
+
+\subsection{Analisi della Nitidezza tramite Laplaciano}
+
+Per ogni patch calcoliamo la Varianza del Laplaciano. Una varianza bassa indica un'immagine priva di dettagli (sfocata), che viene scartata per non "sporcare" il dataset.
+
+
+% --- INSERIRE IMMAGINE 3 QUI ---
+
+% File: laplacian_check.png (generato da task3_analysis.py)
+
+\begin{figure}[htbp]
+
+    \centering
+
+    \includegraphics[width=0.8\textwidth]{media/laplacian_check.png}
+
+    \caption{Esempio di filtraggio qualitativo: identificazione di patch nitide idonee all'addestramento rispetto a zone sfocate scartate.}
+
+    \label{fig:laplacian}
+
+\end{figure}
+
+
+\section{Normalizzazione Cromatica di Macenko}
+
+A causa delle differenze tra laboratori, i colori Ematossilina ed Eosina (H\&E) variano molto. Usiamo l'algoritmo di Macenko \cite{macenko2009method} per uniformare i colori su un template standard.
+
+
+% --- INSERIRE IMMAGINE 4 QUI ---
+
+% File: macenko_pipeline.png (generato da task3_normalization.py)
+
+\begin{figure}[htbp]
+
+    \centering
+
+    \includegraphics[width=0.9\textwidth]{media/macenko_pipeline.png}
+
+    \caption{Pipeline di Macenko: Patch originale, estrazione del canale dell'Ematossilina e risultato normalizzato.}
+
+    \label{fig:macenko}
+
+\end{figure}
+
+
+\section{Pipeline di Elaborazione e Architettura Software}
+
+Il sistema per l'analisi si avvale di una sequenza flessibile creata con Python a guidare ogni fase. La struttura permette aggiornamenti continui senza bloccare il flusso operativo.
+
+L ambiente di sviluppo usa WSL e eon questo si può lavorare dentro un ambiente simile a Linux, così da usare al meglio le capacità di calcolo e la compatibilità delle librerie di sistema.
+
+Il programma verifica se le librerie del sistema funzionano insieme nel modo giusto. Ogni pezzo deve stare al suo posto per evitare errori di configurazione più avanti.
+
+La procedura si articola nei seguenti task:
+
+
+\begin{itemize}
+
+    \item \textbf{Generazione Metadati (\texttt{task2\_generateJson.py})}: Gestione delle WSI e creazione dei file JSON per la mappatura delle coordinate.
+
+    \item \textbf{Pre-processing (\texttt{task3\_mask.py}, \texttt{task3\_normalization.py})}: Generazione delle maschere di tessuto e normalizzazione cromatica delle patch.
+
+    \item \textbf{Controllo Qualità (\texttt{task3\_analysis.py})}: Filtraggio delle immagini tramite analisi della nitidezza (Varianza del Laplaciano).
+
+    \item \textbf{Suddivisione del Dataset (\texttt{create\_cv\_splits.py})}: Gestione della Cross-Validation a 5 fold con raggruppamento per paziente, garantendo la separazione netta tra training e test set per evitare il \textit{data leakage}.
+
+\end{itemize}
+
+
+\subsection{Suddivisione del Dataset e Prevenzione del Data Leakage}
+
+Chi lavora con immagini mediche digitali sa che ogni persona reagisce diversamente. Quando si dividono i dati per creare modelli, capita spesso un errore nascosto: se le porzioni d’immagine vengono mischiate senza attenzione, l'algoritmo impara troppo bene alcune informazioni. Questo succede perché parti dello stesso paziente finiscono sia nei dati usati per apprendere sia in quelli per verificare. Il risultato? Prestazioni gonfiate, poco realistiche
+
+
+
+Ogni volta che più ritagli arrivano da uno stesso vetrino – dunque dal medesimo paziente – risultano molto simili nell’aspetto e nei tratti biologici. Di conseguenza, il sistema rischierebbe di fissarsi sul singolo caso clinico piuttosto che riconoscere le forme tipiche del papillomavirus. A impedirlo interviene lo script chiamato \texttt{create\_cv\_splits.py}, progettato per separare i dati seguendo la persona d’origine (\textbf{Patient-level Split}): ecco cosa significa Suddivisione per Paziente. Così facendo, tutti i frammenti legati a un individuo restano confinati nel gruppo di addestramento oppure in quello di verifica finale. Ne deriva una stima delle prestazioni basata solo su persone mai incontrate prima.
+
+
+\section{Modello di Classificazione: ResNet50}
+
+Il riconoscimento dei pattern morfologici legati all'HPV è affidato a una rete neurale convoluzionale \textbf{ResNet50}. Questa architettura è caratterizzata dall'utilizzo di \textit{residual blocks} che permettono di addestrare modelli molto profondi evitando la degradazione del gradiente.
+
+
+\subsection{Transfer Learning e Fine-tuning}
+
+Dato che l'addestramento di una rete profonda come la ResNet50 richiede una quantità enorme di dati e risorse computazionali, è stata adottata la strategia del \textbf{Transfer Learning}. Il modello è stato inizializzato con i pesi pre-addestrati sul dataset \textit{ImageNet}, una vasta banca dati di immagini naturali. 
+
+
+Questa tecnica permette alla rete di sfruttare la capacità già acquisita di riconoscere strutture primitive (bordi, colori, texture) e di "specializzarsi" successivamente nel riconoscimento delle caratteristiche morfologiche dei campioni istopatologici infetti da HPV attraverso una fase di \textit{fine-tuning}. Questo approccio non solo accelera la convergenza dell'algoritmo, ma migliora significativamente la robustezza del modello in presenza di dataset medici di dimensioni limitate.
+
+
+
+Per far fronte allo sbilanciamento delle classi (presenza di molte patch sane rispetto a quelle infette), è stata adottata la \textbf{Focal Loss} come funzione di perdita. Questa scelta permette al modello di focalizzarsi maggiormente sugli esempi "difficili" o rari, migliorando la capacità di identificazione delle lesioni da HPV. Il sistema è implementato utilizzando il framework \textbf{PyTorch}, integrando \textbf{OpenCV} per la manipolazione delle immagini e \textbf{OpenSlide} per l'accesso ai livelli piramidali delle WSI.
+
+
+\subsection{Ottimizzazione e Focal Loss}
+
+Per contrastare il forte sbilanciamento tra le classi (con una netta prevalenza di tessuto sano rispetto a quello lesionato), il processo di ottimizzazione non ha utilizzato una classica funzione di Cross-Entropy, bensì la \textbf{Focal Loss}. Tale funzione è definita matematicamente come:
+
+
+\begin{equation}
+    FL(p_t) = -\alpha_t (1 - p_t)^\gamma \log(p_t)
+\end{equation}
+
+
+L'introduzione del parametro di \textit{focusing} $\gamma$ (gamma) permette di ridurre il peso degli esempi "facili" (patch chiaramente sane), costringendo il modello a concentrarsi maggiormente sugli esempi "difficili" o rari. Questo previene che la vasta maggioranza di patch negative domini il segnale di errore durante la \textit{backpropagation}, migliorando la capacità di rilevamento dei segni di infezione virale. 

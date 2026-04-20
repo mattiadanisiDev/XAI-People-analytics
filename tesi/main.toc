@@ -1,0 +1,75 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {chapter}{Sommario}{ii}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}Introduzione}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Contesto e motivazione}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Dal reattivo al predittivo: la People Analytics}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Dalla previsione all'azione: il limite dei modelli \textit {black box}}{2}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Obiettivi della tesi}{3}{section.1.4}%
+\contentsline {chapter}{\numberline {2}Quadro teorico}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}People Analytics e turnover}{5}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Definizione ed evoluzione della People Analytics}{5}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Fattori di attrition}{6}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Limiti degli approcci tradizionali e vantaggi dei dati strutturati}{8}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Machine Learning per la previsione del turnover}{9}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Explainable AI (XAI)}{9}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Definizione di interpretabilità}{9}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Interpretabilità ed esplicabilità}{10}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Caratteristiche di una buona spiegazione}{11}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Quando l'interpretabilità è necessaria e quando no}{12}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}L'effetto Rashomon}{14}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}SHAP (SHapley Additive exPlanations)}{15}{subsection.2.3.6}%
+\contentsline {subsubsection}{Fondamenti nella teoria dei giochi cooperativi}{15}{section*.3}%
+\contentsline {subsubsection}{Proprietà formali}{15}{section*.4}%
+\contentsline {subsubsection}{TreeExplainer: ottimizzazione per modelli ad albero}{16}{section*.5}%
+\contentsline {subsubsection}{Dalle spiegazioni locali a quelle globali}{17}{section*.6}%
+\contentsline {subsubsection}{Limiti}{18}{section*.7}%
+\contentsline {subsection}{\numberline {2.3.7}LIME (Local Interpretable Model-agnostic Explanations)}{18}{subsection.2.3.7}%
+\contentsline {subsubsection}{Perturbazione locale e modello surrogato lineare}{18}{section*.8}%
+\contentsline {subsubsection}{Fedeltà locale}{20}{section*.9}%
+\contentsline {subsubsection}{Limiti}{21}{section*.10}%
+\contentsline {subsection}{\numberline {2.3.8}Spiegazioni controfattuali (Alibi CounterfactualProto)}{21}{subsection.2.3.8}%
+\contentsline {subsubsection}{Formulazione di Wachter et al.}{22}{section*.11}%
+\contentsline {subsubsection}{CounterfactualProto: guida tramite prototipi di classe}{23}{section*.12}%
+\contentsline {subsubsection}{Proprietà desiderabili}{25}{section*.13}%
+\contentsline {subsubsection}{Limiti}{25}{section*.14}%
+\contentsline {subsection}{\numberline {2.3.9}Confronto teorico SHAP e LIME}{27}{subsection.2.3.9}%
+\contentsline {chapter}{\numberline {3}Caso studio illustrativo}{29}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Dataset e setup}{29}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Il dataset IBM HR Attrition}{29}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Preprocessing}{30}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}Strategia di bilanciamento e tuning degli iperparametri}{32}{subsection.3.1.3}%
+\contentsline {section}{\numberline {3.2}Performance del modello}{33}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Ottimizzazione della soglia}{34}{subsection.3.2.1}%
+\contentsline {section}{\numberline {3.3}Spiegazioni SHAP}{35}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Importanza globale delle feature}{35}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Tre casi locali: vero positivo, falso positivo, falso negativo}{37}{subsection.3.3.2}%
+\contentsline {paragraph}{Dipendente~214 --- Vero Positivo.}{37}{section*.24}%
+\contentsline {paragraph}{Dipendente~223 --- Falso Positivo.}{37}{section*.26}%
+\contentsline {paragraph}{Dipendente~240 --- Falso Negativo.}{38}{section*.28}%
+\contentsline {section}{\numberline {3.4}Spiegazioni LIME}{40}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Importanza globale aggregata}{40}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Spiegazioni locali sui tre casi}{41}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Confronto sinottico}{43}{subsection.3.4.3}%
+\contentsline {section}{\numberline {3.5}Analisi controfattuale (Alibi)}{44}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Configurazione dell'explainer}{44}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Dipendente~214: una lettura operativa coerente}{44}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Dipendente~223: un controfattuale che rivela bias del modello}{46}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}Leve azionabili vs fattori immutabili}{47}{subsection.3.5.4}%
+\contentsline {section}{\numberline {3.6}Dashboard}{47}{section.3.6}%
+\contentsline {chapter}{\numberline {4}Discussione}{48}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Sintesi dei risultati}{48}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Limiti del caso studio}{49}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Implicazioni per la pratica HR}{51}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Dal segnale all'azione: il workflow XAI-assistito}{51}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Rischi dell'adozione: algorithm aversion e automation bias}{52}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Bias algoritmici e fairness}{53}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Quadro normativo: GDPR e AI Act}{53}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}Human-in-the-loop come requisito di governance}{54}{subsection.4.3.5}%
+\contentsline {chapter}{\numberline {5}Conclusioni e sviluppi futuri}{56}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Sviluppi futuri}{57}{section.5.1}%
+\contentsline {chapter}{\numberline {A}Appendici}{58}{appendix.Alph1}%
+\contentsline {section}{\numberline {A.1}Elenco completo delle feature del dataset IBM HR}{58}{section.Alph1.1}%
+\contentsline {section}{\numberline {A.2}Spazio degli iperparametri e configurazione del modello}{60}{section.Alph1.2}%
+\contentsline {chapter}{Bibliografia}{61}{appendix*.38}%
+\contentsline {chapter}{Ringraziamenti}{64}{appendix*.39}%

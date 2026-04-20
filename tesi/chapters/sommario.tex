@@ -1,0 +1,18 @@
+\chapter*{Sommario}
+\addcontentsline{toc}{chapter}{Sommario}
+
+Il presente lavoro affronta il tema dell'Explainable Artificial Intelligence (XAI) applicata alla People Analytics, con l'obiettivo di mostrare come le tecniche di spiegabilità possano rendere operativamente utili le previsioni di un modello di machine learning nel contesto della gestione del turnover aziendale.
+
+Dopo aver inquadrato la People Analytics nella sua evoluzione storica e aver evidenziato i limiti degli approcci tradizionali alla retention, la tesi analizza i fondamenti teorici di tre framework esplicativi --- SHAP, LIME e le spiegazioni controfattuali (Alibi) --- discutendone proprietà formali, ambiti di applicazione e limiti. L'analisi teorica è integrata da un caso studio illustrativo condotto sul dataset IBM HR Employee Attrition, nel quale un modello XGBoost è addestrato a prevedere il rischio di abbandono e le tre tecniche sono applicate alle medesime istanze per confrontarne il contributo informativo.
+
+I risultati mostrano che i tre framework non sono alternativi ma complementari: SHAP fornisce un'attribuzione fondata e coerente con la decisione del modello, LIME traduce la spiegazione in regole accessibili a un utente non tecnico, e il controfattuale indica le condizioni minime sotto cui la predizione cambierebbe, abilitando il passaggio dalla diagnosi all'intervento. La convergenza o divergenza dei tre metodi sulle stesse istanze consente al responsabile HR di calibrare il proprio livello di fiducia nella segnalazione e di decidere se e come intervenire. La conclusione principale è che la capacità predittiva acquista valore operativo solo quando è accompagnata da un ecosistema esplicativo capace di rispondere simultaneamente alle domande \emph{perché}, \emph{come} e \emph{cosa fare}.
+
+\bigskip
+\noindent\textbf{Abstract}
+
+\bigskip
+This thesis addresses the application of Explainable Artificial Intelligence (XAI) to People Analytics, demonstrating how explainability techniques can transform machine learning predictions into actionable insights for employee turnover management.
+
+After situating People Analytics within its historical evolution and highlighting the limitations of traditional retention approaches, the work analyzes the theoretical foundations of three explanatory frameworks --- SHAP, LIME, and counterfactual explanations (Alibi) --- discussing their formal properties, domains of application, and limitations. The theoretical analysis is complemented by an illustrative case study on the IBM HR Employee Attrition dataset, where an XGBoost model is trained to predict attrition risk and the three techniques are applied to the same instances for comparative evaluation.
+
+Results show that the three frameworks are not alternatives but complements: SHAP provides a grounded attribution consistent with the model's decision, LIME translates the explanation into rules accessible to a non-technical user, and counterfactuals identify the minimal conditions under which the prediction would change, enabling the transition from diagnosis to intervention. The convergence or divergence of the three methods on the same instances allows the HR manager to calibrate trust in the alert and decide whether and how to act. The main conclusion is that predictive power gains operational value only when accompanied by an explanatory ecosystem capable of simultaneously answering the questions \emph{why}, \emph{how}, and \emph{what to do}.

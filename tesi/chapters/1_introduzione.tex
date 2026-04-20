@@ -1,0 +1,43 @@
+\chapter{Introduzione}
+
+\section{Contesto e motivazione}
+
+Nell'economia attuale, il costo del turnover rappresenta un onere finanziario e operativo significativo per le aziende.
+Secondo \cite{Boushey2012}, negli Stati Uniti il costo medio del turnover si colloca in un intervallo compreso tra il 20\% e il 50\% dello stipendio annuale del dipendente uscente. Per figure di alto profilo all'interno dell'organico aziendale, come dirigenti o ruoli \textit{high-skilled}, tale onere può arrivare fino al 213\%.
+Il report \cite{WorkInstitute2024} ha stimato che, nel 2023, le aziende statunitensi hanno speso approssimativamente 900 miliardi di dollari soltanto per la sostituzione dei dipendenti che hanno abbandonato volontariamente il posto di lavoro.
+Uno studio su piccola scala presentato in \cite{Kuhn2021}, relativo a piccole aziende del settore retail, ha quantificato il costo diretto della produttività persa in \$1.840 (approssimativamente 9,6 giorni lavorativi); tale stima, tuttavia, esclude i costi di acquisizione, di formazione e tutti i \textit{soft cost} legati al nuovo candidato.
+La situazione risulta analoga nel continente europeo. \cite{Price2020} stima in £30.614 ($\sim$122\% dello stipendio annuo) il costo medio per sostituire un dipendente, in un'azienda del Regno Unito, con retribuzione annua superiore a £25.000, così suddiviso:
+\begin{itemize}
+    \item costo di acquisizione e assunzione: $\sim$£5.400;
+    \item produttività persa durante il periodo di avviamento di 28 settimane: $\sim$£25.182.
+\end{itemize}
+\cite{CIPD2025} riporta stime pressoché analoghe, con un costo di assunzione di circa £6.125 e un costo totale, nelle prime 52 settimane, pari a £63.000.
+In Francia, \cite{Elevo2023} quantifica il costo di sostituzione in un valore compreso tra 6 e 9 mesi dello stipendio annuo del dipendente da rimpiazzare.
+
+\section{Dal reattivo al predittivo: la People Analytics}
+A fronte dei costi evidenziati nella sezione precedente, diventa indispensabile per le aziende spostare il proprio approccio da uno reattivo --- fondato su \textit{exit interview} e indagini successive all'abbandono --- a uno predittivo e \textit{data-driven}, orientato a identificare per tempo i dipendenti a rischio e a intervenire con azioni mirate di \textit{retention}.
+Le fondamenta di questo approccio risiedono nella People Analytics (anche detta HR o worforce analytics), che \cite{Isson_Harriott_2016} definiscono come l'integrazione di fonti di dati eterogenee, provenienti sia dall'interno sia dall'esterno dell'azienda, funzionali a rispondere e ad agire su domande di business strategiche relative al capitale umano di un'organizzazione.
+In questa direzione, il report \cite{deloitte2026trends} evidenzia uno spostamento dell'attenzione da un paradigma \textit{tech-centric} a uno \textit{human-centric}: la tecnologia è, per sua natura, replicabile, mentre capacità prettamente umane come l'intuito, la creatività e il senso del giudizio non lo sono.
+Nel medesimo report si rileva, inoltre, che il 67\% dei leader intervistati ritiene che l'avvento dell'IA abbia segnato un punto di svolta, in cui la velocità e l'agilità sono divenute il principale vantaggio competitivo.
+
+\section{Dalla previsione all'azione: il limite dei modelli \textit{black box}}
+Uno degli obiettivi centrali della People Analytics consiste nel trasformare l'insieme eterogeneo di dati raccolti in previsioni azionabili sui comportamenti dei dipendenti, a partire dal rischio di abbandono volontario dell'azienda. Per raggiungere tale scopo le organizzazioni ricorrono a modelli di \textit{machine learning} in grado di cogliere relazioni non lineari tra le variabili e di restituire, per ciascun dipendente, una stima probabilistica del rischio di \textit{attrition} \cite{schweyer2018predictive}.
+
+Tali modelli, tuttavia, pagano la loro elevata capacità predittiva con un costo significativo in termini di trasparenza: operano, di fatto, come vere e proprie \textit{scatole nere} (\textit{black box}), fornendo in output un punteggio di rischio senza esplicitare le ragioni che lo sostengono. Nel contesto HR questa opacità è tutt'altro che innocua. In primo luogo, un manager difficilmente agisce sulla base di una previsione che non è in grado di comprendere e giustificare ai propri superiori o al diretto interessato, fenomeno noto in letteratura come \textit{algorithm aversion} \cite{dietvorst2015algorithm}.
+In secondo luogo, l'informazione che un dipendente è ad alto rischio di dimissione risulta di scarsa utilità operativa se non si conoscono le leve su cui intervenire per trattenerlo. Infine, le decisioni automatizzate che riguardano le persone sollevano questioni etiche e normative di primo piano: il GDPR, all'art. 22, riconosce agli interessati il diritto a non essere sottoposti a decisioni basate unicamente su trattamenti automatizzati e a ricevere una spiegazione significativa della logica sottesa \cite{GDPR_Art22}.
+
+Proprio per rispondere a queste esigenze si è sviluppata la \textit{Explainable Artificial Intelligence} (XAI), un insieme di tecniche che permettono di rendere ispezionabili le decisioni dei modelli complessi senza sacrificarne la capacità predittiva.
+Come sarà approfondito nel capitolo successivo, la XAI si propone come elemento di raccordo tra le \textit{performance} dei modelli di ultima generazione e la trasparenza richiesta dagli utenti finali; trasparenza che, in ambito HR, si traduce nella necessità concreta di fornire spiegazioni intelligibili a manager non tecnici, chiamati a convertire le previsioni degli algoritmi in azioni concrete sul capitale umano.
+
+\section{Obiettivi della tesi}
+
+Alla luce di quanto esposto, il presente lavoro si propone di mostrare come le tecniche di \textit{Explainable Artificial Intelligence} possano costituire uno strumento concreto a supporto della People Analytics, con il fine ultimo di incrementare la \textit{retention} del personale. L'ipotesi di fondo è che la capacità predittiva di un modello di \textit{machine learning}, per quanto accurata, acquisti reale valore operativo solo quando è accompagnata da spiegazioni intelligibili: soltanto comprendendo le ragioni di una previsione e individuando le leve su cui intervenire, un responsabile HR può trasformare un segnale di rischio di abbandono in un'azione mirata di \textit{retention}.
+
+In coerenza con la natura compilativa del lavoro, l'obiettivo generale si articola in tre obiettivi specifici:
+\begin{itemize}
+    \item fornire un quadro teorico organico sull'applicazione della XAI alla previsione del \textit{turnover}, collocandola all'interno della più ampia evoluzione della People Analytics e dei vincoli normativi che regolano le decisioni automatizzate in ambito HR;
+    \item presentare e confrontare tre tra i principali \textit{framework} di XAI --- SHAP, LIME e le spiegazioni controfattuali (Alibi) --- analizzandone i fondamenti teorici, le proprietà, gli ambiti di applicazione e i limiti;
+    \item illustrare, attraverso un caso studio condotto sul \textit{dataset} IBM HR Employee Attrition, come i tre \textit{framework} rispondano a domande differenti poste dal responsabile HR e discutere quale approccio esplicativo risulti più adeguato al contesto, sia per interpretare le decisioni del modello sia per individuare interventi concreti finalizzati alla \textit{retention}.
+\end{itemize}
+
+Coerentemente con l'impianto compilativo, il caso studio presentato nel Capitolo~\ref{chap:caso-studio} non ha finalità sperimentali: esso funge da banco di prova illustrativo per i concetti sviluppati nel quadro teorico e mira a rendere tangibile il contributo che la XAI può offrire al passaggio dalla previsione all'azione nel contesto HR.

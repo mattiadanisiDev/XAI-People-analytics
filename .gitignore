@@ -16,6 +16,9 @@ models/*.pkl
 # Data
 data/
 
+# Assets
+output
+
 *.env
 .DS_Store
 

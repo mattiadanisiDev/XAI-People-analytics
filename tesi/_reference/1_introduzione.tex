@@ -1,0 +1,116 @@
+\chapter{Introduzione al problema}
+
+\section{Il Papillomavirus Umano (HPV): Classificazione e Patogenesi}
+L'HPV appartiene alla famiglia delle \textit{Papillomaviridae} ed è un virus a DNA che infetta prevalentemente le cellule epiteliali della cute e delle mucose. Sebbene la maggior parte delle infezioni sia transitoria e asintomatica, la persistenza di ceppi specifici è il fattore determinante per lo sviluppo di lesioni precancerose.
+
+\subsection{Genotipi e Rischio Oncogeno}
+Ci sono oltre 200 genotipi di HPV, classificati in base alla loro sequenza genetica e al potenziale di trasformazione maligna. Recenti studi sulla sorveglianza molecolare hanno evidenziato le seguenti informazioni: \cite{hpv_molecular_2025}:
+\begin{itemize}
+	\item \textbf{Ceppi a basso rischio (LR-HPV):} come i tipi 6 e 11, associati a lesioni benigne quali i condilomi floridi, che raramente evolvono in neoplasie.
+	\item \textbf{Ceppi ad alto rischio (HR-HPV):} come i tipi 16 e 18, responsabili della quasi totalità dei carcinomi cervicali. Questi virus codificano per le oncoproteine E6 ed E7, capaci di degradare le proteine di controllo del ciclo cellulare dell'ospite (p53 e pRb), innescando una proliferazione cellulare incontrollata.
+\end{itemize}
+
+\section{Metodologie di Identificazione e Screening}
+La gestione clinica dell'HPV utilizza vari strumenti diagnostici, ognuno con obiettivi specifici. I principali metodi non morfologici sono:
+\begin{enumerate}
+	\item \textbf{Test Molecolari (HPV DNA Test):} identificano la presenza del genoma virale. Sono estremamente sensibili nel rilevare l'infezione, ma non forniscono informazioni sull'effettivo danno cellulare già avvenuto.
+	\item \textbf{Ispezione Clinica (Colposcopia):} un esame visivo diretto che utilizza soluzioni reagenti (come acido acetico) per mettere in risalto aree anomale sulla cervice, guidando l'eventuale prelievo bioptico.
+\end{enumerate}
+
+\section{L'Analisi Microscopica: Dal Vetrino alla Diagnosi}
+Anche se i test molecolari sono utili, la diagnosi definitiva di una lesione dipende dall'analisi morfologica su vetrino. Questo metodo consente di esaminare direttamente l'architettura tissutale e le anomalie cellulari.
+
+\subsection{Preparazione del preparato istologico}
+Il processo inizia con il prelievo di un campione di tessuto (tipo citologico tramite Pap-test o istologico tramite biopsia). Il campione viene fissato, incluso in paraffina e tagliato in sezioni sottilissime (circa 4-5 micron). Successivamente, viene depositato su un vetrino e sottoposto alla colorazione standard \textbf{Ematossilina ed Eosina (H\&E)}:
+\begin{itemize}
+	\item L'Ematossilina colora in blu/viola i nuclei, evidenziando il materiale genetico.
+	\item L'Eosina colora in rosa il citoplasma e le strutture extracellulari.
+\end{itemize}
+
+\subsection{Indicatori Morfologici della Lesione}
+Per identificare una lesione da HPV al microscopio si ricercano specifici marcatori visivi, definiti \textit{atipie citologiche}:
+\begin{itemize}
+	\item \textbf{Coilocitosi:} è l'indicatore patognomonico dell'infezione da HPV. Le cellule (coilociti) presentano un nucleo ingrandito, ipercromatico (molto scuro) e circondato da un alone chiaro perinucleare.
+	\item \textbf{Disteratosi:} alterazioni della cheratinizzazione cellulare.
+	\item \textbf{Disorganizzazione stratigrafica:} perdita del normale ordine degli strati cellulari nell'epitelio.
+\end{itemize}
+
+Questa analisi visiva, storicamente affidata solo al patologo, segna un punto di incontro tra la medicina clinica e la patologia digitale. La complessità dei vetrini richiede strumenti computazionali per supportare la classificazione automatica delle lesioni.
+
+\subsection{Limiti dei metodi tradizionali e necessità del Triage Morfologico}
+Come evidenziato nelle ultime pubblicazioni \cite{hpv_molecular_2025}, anche se il test del DNA rappresenta la scelta principale per lo screening iniziale, gestire le pazienti positive richiede protocolli di triage più avanzati che includano analisi morfologiche. Questo aiuta a diminuire il numero di colposcopie non necessarie e a migliorare la specificità diagnostica. Da ciò si può dedurre che si sta passando a una strategia di screening più integrata. Infatti, se da un lato il test molecolare dell'HPV DNA offre una sensibilità migliore nel rilevare l'infezione virale, dall'altro non riesce a distinguere tra un'infezione temporanea e una lesione pre-cancerosa attiva.
+
+Perciò, l'analisi dei campioni istologici continua a essere il extit{gold standard} per la specificità diagnostica. Tuttavia, l'esame microscopico tradizionale presenta una notevole variabilità tra diversi osservatori. Come viene discusso nelle ultime ricerche del settore, integrare sistemi di supporto alla diagnosi basati su reti neurali convoluzionali (CNN) potrebbe aiutare a colmare questa lacuna, offrendo un'analisi quantitativa e riproducibile delle atipie cellulari e riducendo significativamente gli errori umani nella classificazione delle lesioni ad alto rischio.
+
+ 
+
+\section{L'Evoluzione della Digital Pathology} Negli ultimi decenni, la patologia ha vissuto un cambiamento significativo grazie alla Digital Pathology. Questo processo implica la digitalizzazione dei vetrini fisici usando scanner ad alta risoluzione, dando vita alle cosiddette \textit{Whole Slide Images} (WSI).
+
+Queste immagini multi-gigapixel offrono vantaggi senza precedenti: \begin{enumerate} \item \textbf{Accessibilità}: Possibilità di consulti multidisciplinari immediati e telepatologia. \item \textbf{Archiviazione}: Eliminazione dei limiti fisici legati allo stoccaggio dei vetrini in vetro. \item \textbf{Analisi Computazionale}: La WSI non è più solo un'immagine da osservare, ma un dataset di pixel pronto per essere analizzato da algoritmi di \textit{Computer Vision}. \end{enumerate}
+
+L'integrazione del Deep Learning (DL) in questo flusso di lavoro non intende sostituire il medico, ma piuttosto fornirgli uno strumento di supporto decisionale. Come hanno dimostrato i lavori pionieristici di Janowczyk e Madabhushi \cite{janowczyk2016deep}, l'intelligenza artificiale è particolarmente brava a riconoscere schemi morfologici complessi e ripetitivi che potrebbero sfuggire all'osservazione umana, rendendo così il processo diagnostico più standardizzato.
+
+\section{Stato dell'Arte e Metodologie Correlate}
+L'applicazione dell'intelligenza artificiale allo screening del carcinoma cervicale ha subito un'evoluzione significativa nell'ultimo decennio. Inizialmente, la ricerca si è concentrata sull'analisi di immagini citologiche (Pap-test), ma con la diffusione della \textit{Digital Pathology}, l'attenzione si è spostata verso l'analisi istopatologica su \textit{Whole Slide Images} (WSI).
+
+\subsection{\small Evoluzione degli Approcci: dalle Feature Manuali al Deep Learning}
+I primi tentativi di classificazione automatizzata si basavano sulla \textbf{Feature Extraction} manuale. Gli algoritmi venivano progettati per estrarre caratteristiche morfometriche specifiche, come il diametro nucleare, il rapporto nucleo-citoplasma e la circolarità delle cellule. 
+\begin{itemize}
+    \item \textbf{Limiti}: Questi metodi "hand-crafted" risultano spesso fragili dinanzi alla variabilità cromatica e agli artefatti di preparazione dei vetrini.
+    \item \textbf{Sintesi}: Lo stato dell'arte attuale ha superato questi limiti grazie alle \textbf{Convolutional Neural Networks (CNN)}. Modelli come ResNet, VGG e Inception sono in grado di apprendere gerarchicamente le caratteristiche visive direttamente dai pixel, dimostrando una robustezza superiore nella gestione della variabilità biologica.
+\end{itemize}
+
+
+
+\subsection{Sintesi delle Strategie di Analisi}
+La letteratura scientifica affronta il problema della classificazione istologica principalmente attraverso due strategie:
+\begin{enumerate}
+    \item \textbf{Patch-based Classification}: L'approccio adottato in questa tesi, in cui la WSI viene suddivisa in unità discrete. Studi come quelli di Janowczyk et al. \cite{janowczyk2016deep} hanno dimostrato che l'analisi a livello di patch permette di catturare dettagli cellulari finissimi (come i coilociti) che verrebbero persi in un'analisi a bassa risoluzione.
+    \item \textbf{Multiple Instance Learning (MIL)}: Una tecnica avanzata che considera l'intero vetrino come un "sacchetto" di patch, cercando di identificare quelle più rilevanti per la diagnosi finale. Sebbene promettente, il MIL richiede dataset molto vasti per convergere correttamente.
+\end{enumerate}
+
+\subsection{Confronto dei Metodi di Pre-elaborazione}
+Uno degli aspetti critici evidenziati nello stato dell'arte riguarda la standardizzazione del dato. La Tabella \ref{tab:stato_arte} sintetizza come le sfide principali vengano affrontate dai diversi filoni di ricerca.
+
+\begin{table}[htbp]
+    \centering
+    \small % Riduce leggermente il font per far stare tutto su una riga senza forzare
+    \renewcommand{\arraystretch}{1.5} % Aumenta lo spazio verticale tra le righe per dare "aria"
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} l l l @{}}
+        \toprule
+        \textbf{Sfida Tecnica} & \textbf{Metodi Standard in Letteratura} & \textbf{Approccio della Tesi} \\
+        \midrule
+        Variabilità Cromatica & Normalizzazione di Reinhard o Macenko & \textbf{Algoritmo di Macenko} \\
+        Rumore/Sfondo         & Segmentazione a soglia fissa           & \textbf{Metodo di Otsu} \\
+        Qualità Immagine      & Scarto manuale delle patch             & \textbf{Varianza del Laplaciano} \\
+        Sbilanciamento        & Class Weighting o Over-sampling        & \textbf{Focal Loss} \\
+        \bottomrule
+    \end{tabular*}
+    \caption{Sintesi del confronto tra le metodologie presenti in letteratura e le scelte implementative adottate.}
+    \label{tab:stato_arte}
+\end{table}
+
+\subsection{Normalizzazione Cromatica: Macenko vs Reinhard} Mentre il metodo di Reinhard si basa su una statistica generica (media e deviazione standard dei canali colore), l'algoritmo di Macenko è specifico per l'istopatologia. Esso modella la fisica dell'assorbimento della luce tramite la legge di Beer-Lambert e utilizza la Decomposizione ai Valori Singolari (SVD) per isolare i vettori di densità ottica dell'Ematossilina e dell'Eosina.
+
+    Perché questa scelta? Garantisce che la separazione dei colori sia biologicamente fondata, evitando che variazioni chimiche dei coloranti vengano interpretate dalla rete come segnali patologici, così facendo qualsiasi tipo di WSI venga scelto da qualsiasi tipo di laboratorio possa essere usato per creare un dataset di patches la cui AI riesca ad analizzare.
+
+\subsection{Segmentazione Adattiva: Otsu vs Soglia Fissa} L'utilizzo di una soglia fissa (es. scartare i pixel sopra il valore 200) è vulnerabile alle variazioni di luminosità degli scanner. Il metodo di Otsu, invece, è un approccio non supervisionato che calcola dinamicamente la soglia ottimale minimizzando la varianza intra-classe.
+
+    Perché questa scelta? Permette alla pipeline di essere completamente automatizzata e "agnostica" rispetto al dispositivo di scansione, garantendo una mascheratura del tessuto sempre accurata e in secondo luogo permette la non scelta inerente alla threshold (soglia) così da evitare un errore umano in tale fase. La scelta della soglia è fondamentale perchè ci permette di distinguere 2 gruppi fondamentali ossia lo sfondo(rumore) e il tessuto. Sbagliando questo passaggio ovviamente le patches che andranno ad essere generate potrebbero contenere più rumore che tessuto.
+
+\subsection{Controllo Qualità: Varianza del Laplaciano vs Selezione Manuale} In un dataset composto da decine di migliaia di patch, la selezione manuale dei campioni nitidi è umanamente impossibile e soggettiva. L'uso dell'operatore Laplaciano permette di quantificare il contenuto di alte frequenze (i bordi) dell'immagine.
+
+    Perché questa scelta? Fornisce un parametro numerico oggettivo per scartare le zone sfocate o prive di contenuto informativo, "pulendo" il dataset prima dell'addestramento e migliorando la stabilità del gradiente durante la backpropagation. In questo modo è possibile creare due macro-gruppi di patches ossia quelle che contengono blur (sfocatura) e quelle che invece non lo contengono, così da scartare a priori eventuali problemi legati all'individuazione di cellule HPV
+
+\subsection{Gestione dello Sbilanciamento: Focal Loss vs Class Weighting} Il bilanciamento classico delle classi tramite pesi (\textit{Class Weighting}) agisce su tutte le patch allo stesso modo. La Focal Loss, invece, introduce un fattore di modulazione che riduce il peso degli esempi "facili" (patch chiaramente sane), costringendo il modello a concentrarsi solo sugli esempi "difficili" (focolai di infezione da HPV).
+
+    Perché questa scelta? Data la natura frammentaria del virus, le patch positive sono rare e spesso difficili da distinguere. La Focal Loss impedisce che l'enorme massa di tessuto sano "soffochi" l'apprendimento delle caratteristiche patologiche. Infatti il tumore HPV non agisce in modo uniforme sul tessuto cellulare ma anzi si può evidenziare in "zone". E' molto comune ovviamente trovare patch di tessuto sano su un vetrino che in realtà è stato classificato come positivo all'hpv infatti si parla di falsi negativi quando vengono trovati, perchè appunto provengono da una sorgente clinicamente malata, a tal proposito si aggiungono dei pesi alle patch così da analizzare quelle che effettivamente presentano il virus senza sbagliare.
+
+
+\section{Obiettivi e Sfide della Ricerca} Questo studio mira a sviluppare una pipeline computazionale affidabile in grado di classificare automaticamente i campioni infetti da HPV. Durante la progettazione, sono stati affrontati tre aspetti fondamentali della patologia digitale:
+
+\subsection{Gestione del Big Data Istologico} Le WSI presentano dimensioni che superano spesso il gigabyte, rendendo impossibile il caricamento integrale nella memoria volatile (RAM) delle comuni GPU. Per ovviare a ciò, è stata implementata una tecnica di \textbf{patching}, che suddivide l'immagine piramidale in migliaia di sotto-unità gestibili, garantendo al contempo il mantenimento della risoluzione necessaria per l'analisi cellulare. Queste sotto-unità vengono classificate come patch che rappresentano una sottostruttura della WSI inerente solo però al tessuto.
+
+\subsection{Standardizzazione e Pre-elaborazione} La variabilità cromatica è uno dei principali ostacoli alla generalizzazione dei modelli di IA. Differenze nella marca dello scanner, nel tempo di fissaggio o nel lotto di coloranti (Ematossilina ed Eosina) possono alterare i colori del tessuto. In questo studio, per ovviare a ciò, abbiamo adottato l'algoritmo di Macenko per la normalizzazione del colore e il metodo di Otsu per la segmentazione automatica del tessuto (foreground) rispetto allo sfondo (background), minimizzando il rumore computazionale.
+
+\subsection{Integrità Scientifica e Bias del Paziente} Un problema spesso sottovalutato nei modelli di classificazione è il \textit{Data Leakage}. Se patch dello stesso paziente sono presenti sia nel training che nel test set, il modello potrebbe imparare a riconoscere il paziente specifico anziché la patologia. Per risolvere questo problema, è stata implementata una Cross-Validation a 5 fold stratificata per paziente, assicurando che i risultati ottenuti siano rappresentativi della capacità del modello di operare su soggetti mai visti in precedenza così da avere risultati più veritieri e congrui con che si sta analizzando.

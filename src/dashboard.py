@@ -414,12 +414,7 @@ with tab2:
                 "il rischio che il dipendente lasci l'azienda."
             )
 
-        if "cf_explainer" not in st.session_state:
-            cf, fn = _build_cf_explainer(model, X_train)
-            st.session_state.cf_explainer = cf
-            st.session_state.cf_predict_fn = fn
-        cf_explainer = st.session_state.cf_explainer
-        predict_fn = st.session_state.cf_predict_fn
+        cf_explainer, predict_fn = _build_cf_explainer(model, X_train)
 
         with st.spinner(
             "Calcolo del controfattuale in corso (può richiedere ~30 secondi)…"

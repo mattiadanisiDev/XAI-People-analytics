@@ -1,0 +1,30 @@
+\chapter{Conclusioni e sviluppi futuri}
+
+\label{chap:conclusioni}
+
+Il presente lavoro di ricerca ha affrontato una delle sfide più complesse della patologia digitale moderna: lo sviluppo di una pipeline computazionale robusta e standardizzata per l'identificazione di lesioni indotte da HPV su \textit{Whole Slide Images} (WSI). 
+
+Partendo dall'analisi dello stato dell'arte e dei lavori correlati, è emerso come la principale barriera all'adozione clinica di sistemi di supporto alla diagnosi sia l'eterogeneità del dato. In questo contesto, la tesi ha fornito un contributo metodologico focalizzato sulla \textbf{standardizzazione del segnale}.
+
+\section*{Sintesi dei Risultati}
+L'integrazione di tecniche avanzate di pre-elaborazione ha permesso di ottenere risultati significativi sotto diversi profili:
+\begin{itemize}
+	\item \textbf{Normalizzazione Cromatica}: L'impiego dell'algoritmo di \textbf{Macenko} si è rivelato superiore ai metodi statistici tradizionali, garantendo che le variazioni chimiche di colorazione non venissero interpretate dal modello come caratteristiche patologiche.
+	\item \textbf{Controllo Qualità}: L'automazione del filtraggio tramite la \textbf{Varianza del Laplaciano} ha permesso di isolare e scartare le patch affette da \textit{blur}, ottimizzando l'addestramento e garantendo che la rete neurale apprendesse solo da dati ad alto contenuto informativo.
+	\item \textbf{Integrità Scientifica}: L'implementazione di una \textbf{Cross-Validation stratificata per paziente} ha risolto alla radice il problema del \textit{Data Leakage}, garantendo che le performance del modello siano realmente rappresentative della sua capacità di generalizzare su soggetti mai analizzati in precedenza.
+\end{itemize}
+
+\section*{Sviluppi Futuri}
+Sebbene la pipeline sviluppata rappresenti un solido punto di partenza, la ricerca apre la strada a diverse evoluzioni promettenti:
+
+\paragraph{Explainable AI (XAI)} 
+Un'evoluzione naturale del progetto riguarda l'implementazione di tecniche di spiegabilità, come le \textit{Gradient-weighted Class Activation Mapping} (Grad-CAM). Questo permetterebbe di visualizzare quali specifiche regioni cellulari (es. i coilociti) hanno influenzato la decisione del modello, trasformando la "scatola nera" dell'intelligenza artificiale in uno strumento di supporto visivo trasparente per il patologo.
+
+\paragraph{Integrazione Multimodale} 
+In futuro, il modello potrebbe beneficiare dell'integrazione di dati clinici extra-immagine (età, anamnesi, ceppo virale specifico). L'unione di caratteristiche morfologiche estratte dalle WSI e dati molecolari potrebbe portare a una medicina di precisione ancora più accurata, in linea con le direzioni tracciate dai lavori più recenti in letteratura.
+
+\paragraph{Verso il Multiple Instance Learning (MIL)} 
+Infine, l'estensione della pipeline verso architetture di \textit{Weakly Supervised Learning}, come il MIL, consentirebbe di analizzare l'intero vetrino in un unico passaggio computazionale, identificando le patch rilevanti in modo autonomo e riducendo ulteriormente la necessità di annotazioni manuali estremamente dettagliate e onerose.
+
+\vspace{2cm}
+In conclusione, questa tesi dimostra che l'intelligenza artificiale, se supportata da una rigorosa fase di ingegnerizzazione del dato, può rappresentare un alleato fondamentale nello screening del carcinoma cervicale, contribuendo a una diagnosi più rapida, oggettiva e scalabile.

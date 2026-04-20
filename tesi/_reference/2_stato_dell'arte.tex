@@ -1,0 +1,103 @@
+\chapter[Stato dell'arte: Detection di lesioni HPV]{Stato dell'arte dei metodi relativi al detection di lesioni hpv}
+
+\section{Stato dell'Arte e Metodologie Correlate}
+L'applicazione dell'intelligenza artificiale allo screening del carcinoma cervicale ha subito un'evoluzione significativa nell'ultimo decennio. Inizialmente, la ricerca si è concentrata sull'analisi di immagini citologiche (Pap-test), ma con la diffusione della \textit{Digital Pathology}, l'attenzione si è spostata verso l'analisi istopatologica su \textit{Whole Slide Images} (WSI).
+
+\subsection{\small Evoluzione degli Approcci: dalle Feature Manuali al Deep Learning}
+I primi tentativi di classificazione automatizzata si basavano sulla \textbf{Feature Extraction} manuale. Gli algoritmi venivano progettati per estrarre caratteristiche morfometriche specifiche, come il diametro nucleare, il rapporto nucleo-citoplasma e la circolarità delle cellule. Lo stato dell'arte attuale ha superato i limiti della feature extraction manuale grazie alle Convolutional Neural Networks (CNN). Come analizzato estensivamente da Litjens et al. \cite{litjens2017survey}, il Deep Learning ha rivoluzionato l'analisi delle immagini mediche permettendo una segmentazione e classificazione end-to-end che riduce drasticamente la variabilità interpretativa tipica dell'osservazione umana. 
+
+\begin{itemize}
+	\item \textbf{Limiti}: Questi metodi "hand-crafted" risultano spesso fragili dinanzi alla variabilità cromatica e agli artefatti di preparazione dei vetrini.
+	\item \textbf{Sintesi}: Lo stato dell'arte attuale ha superato questi limiti grazie alle \textbf{Convolutional Neural Networks (CNN)}. Modelli come ResNet, VGG e Inception sono in grado di apprendere gerarchicamente le caratteristiche visive direttamente dai pixel, dimostrando una robustezza superiore nella gestione della variabilità biologica.
+\end{itemize}
+
+
+
+\subsection{Sintesi delle Strategie di Analisi}
+La letteratura scientifica affronta il problema della classificazione istologica principalmente attraverso due strategie:
+\begin{enumerate}
+	\item \textbf{Patch-based Classification}: L'approccio adottato in questa tesi, in cui la WSI viene suddivisa in unità discrete. Studi come quelli di Janowczyk et al. \cite{janowczyk2016deep} hanno dimostrato che l'analisi a livello di patch permette di catturare dettagli cellulari finissimi (come i coilociti) che verrebbero persi in un'analisi a bassa risoluzione.
+	\item \textbf{Multiple Instance Learning (MIL)}: Una tecnica avanzata che considera l'intero vetrino come un "sacchetto" di patch, cercando di identificare quelle più rilevanti per la diagnosi finale. Sebbene promettente, il MIL richiede dataset molto vasti per convergere correttamente.
+\end{enumerate}
+
+\subsection{Confronto dei Metodi di Pre-elaborazione: Approccio Generale vs Tesi}
+Uno degli aspetti critici evidenziati nello stato dell'arte riguarda la standardizzazione del dato. La Tabella \ref{tab:stato_arte} sintetizza come le sfide principali vengano affrontate dai diversi filoni di ricerca rispetto alle scelte implementative di questo lavoro.
+
+\begin{table}[htbp]
+	\centering
+	\small 
+	\renewcommand{\arraystretch}{1.5} 
+	\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} l l l @{}}
+		\toprule
+		\textbf{Sfida Tecnica} & \textbf{Metodi Standard in Letteratura} & \textbf{Approccio della Tesi} \\
+		\midrule
+		Variabilità Cromatica & Normalizzazione di Reinhard o Macenko & \textbf{Algoritmo di Macenko} \\
+		Rumore/Sfondo         & Segmentazione a soglia fissa            & \textbf{Metodo di Otsu} \\
+		Qualità Immagine      & Scarto manuale delle patch              & \textbf{Varianza del Laplaciano} \\
+		Sbilanciamento        & Class Weighting o Over-sampling         & \textbf{Focal Loss} \\
+		\bottomrule
+	\end{tabular*}
+	\caption{Sintesi del confronto tra le metodologie presenti in letteratura e le scelte implementative adottate.}
+	\label{tab:stato_arte}
+\end{table}
+
+\subsection{Normalizzazione Cromatica: Macenko vs Reinhard} 
+Mentre il metodo di Reinhard si basa su una statistica generica (media e deviazione standard dei canali colore), l'algoritmo di Macenko \cite{macenko2009method} è specifico per l'istopatologia. Esso modella la fisica dell'assorbimento della luce tramite la legge di Beer-Lambert e utilizza la Decomposizione ai Valori Singolari (SVD) per isolare i vettori di densità ottica dell'Ematossilina e dell'Eosina. La scelta dell'algoritmo di Macenko è ulteriormente supportata da studi comparativi, come quello di Tellez et al. \cite{tellez2019quantifying}, i quali hanno dimostrato come una corretta normalizzazione cromatica, unita a tecniche di data augmentation, sia essenziale per garantire che il modello generalizzi correttamente su dataset provenienti da scanner e laboratori differenti, evitando l'overfitting su specifiche tonalità di colore.
+
+
+
+\textbf{Ragioni della scelta:} Tale approccio garantisce che la separazione dei colori sia biologicamente fondata, evitando che variazioni chimiche dei coloranti vengano interpretate dalla rete come segnali patologici. Ciò consente l'utilizzo di WSI provenienti da laboratori differenti per la creazione di un dataset di patch omogeneo e analizzabile.
+
+\subsection{Segmentazione Adattiva: Otsu vs Soglia Fissa} 
+L'utilizzo di una soglia fissa risulta vulnerabile alle variazioni di luminosità degli scanner. Il metodo di Otsu \cite{otsu1979threshold}, invece, è un approccio non supervisionato che calcola dinamicamente la soglia ottimale minimizzando la varianza intra-classe.
+
+\textbf{Ragioni della scelta:} Permette alla pipeline di essere completamente automatizzata e "agnostica" rispetto al dispositivo di scansione, garantendo una mascheratura del tessuto sempre accurata. La scelta dinamica della soglia è fondamentale per distinguere correttamente il tessuto dallo sfondo (rumore), evitando che le patch generate contengano informazioni prive di valore diagnostico.
+
+
+
+\subsection{Controllo Qualità: Varianza del Laplaciano vs Selezione Manuale} 
+In un dataset composto da decine di migliaia di patch, la selezione manuale è impraticabile e soggettiva. L'uso dell'operatore Laplaciano permette di quantificare il contenuto di alte frequenze (i bordi) dell'immagine.
+
+\textbf{Ragioni della scelta:} Fornisce un parametro numerico oggettivo per scartare le zone sfocate, "pulendo" il dataset prima dell'addestramento e migliorando la stabilità del gradiente durante la backpropagation. Consente di isolare le patch prive di contenuto informativo (blur), ottimizzando l'individuazione delle cellule infette da HPV.
+
+\subsection{Gestione dello Sbilanciamento: Focal Loss vs Class Weighting} 
+Il bilanciamento classico (\textit{Class Weighting}) agisce su tutte le patch allo stesso modo. La Focal Loss, invece, introduce un fattore di modulazione che riduce il peso degli esempi "facili" (patch sane), forzando il modello a concentrarsi sugli esempi "difficili".
+
+\textbf{Ragioni della scelta:} Data la natura frammentaria del virus, le patch positive sono rare e spesso difficili da distinguere. Poiché il tumore HPV non agisce uniformemente ma si evidenzia in zone specifiche, la Focal Loss impedisce che l'enorme massa di tessuto sano prevalga sull'apprendimento delle caratteristiche patologiche, riducendo il rischio di falsi negativi.
+
+A differenza del classico Class Weighting, l'impiego della Focal Loss — introdotta originariamente da Lin et al. \cite{lin2017focal} — permette di affrontare il problema dello sbilanciamento delle classi in modo dinamico. In contesti come quello delle lesioni HPV, dove i segnali patologici sono localizzati e numericamente inferiori rispetto al tessuto sano, questa funzione di perdita si rivela fondamentale per focalizzare l'apprendimento sui campioni più complessi.
+
+
+\section{Related Work: Analisi dei Lavori Correlati}
+L'integrazione del Deep Learning nella patologia digitale per il rilevamento dell'HPV è un campo in rapida espansione. Di seguito vengono analizzati tre studi recenti che rappresentano lo stato dell'arte e che validano le scelte metodologiche adottate in questa tesi.
+
+\subsection{Predizione dello stato HPV e Sottotipi Molecolari}
+Un contributo significativo è fornito da \textbf{Chakravarthy et al. (2023)} \cite{chakravarthy2023deep}, i quali hanno sviluppato un modello per predire i sottotipi molecolari del carcinoma cervicale direttamente dalle immagini istologiche. Il loro lavoro dimostra che le \textit{Whole Slide Images} contengono segnali morfologici profondi correlati all'infezione virale che superano la capacità diagnostica dell'occhio umano. Mentre il loro studio si concentra sulla prognosi, la presente tesi ne mutua l'approccio basato su WSI, estendendolo con una pipeline di pre-elaborazione più rigida per garantire la purezza del segnale in ingresso.
+
+\subsection{Efficacia del Deep Learning: Meta-Analisi della Letteratura}
+La validità dell'approccio computazionale è confermata dalla revisione sistematica di \textbf{Zhu et al. (2024)} \cite{zhu2024deep}. Attraverso una meta-analisi di molteplici studi sulla predizione dello stato HPV, gli autori evidenziano come le reti neurali convoluzionali raggiungano prestazioni eccellenti (AUC $>$ 0.85). Tuttavia, lo studio identifica nella variabilità dei dataset la principale barriera clinica. Questa evidenza scientifica giustifica l'enfasi posta in questo lavoro sull'uso della \textbf{Focal Loss} e della normalizzazione cromatica, strumenti essenziali per gestire lo sbilanciamento e l'eterogeneità dei campioni analizzati.
+
+\subsection{Standardizzazione e Pipeline Vendor-Agnostic}
+Infine, lo studio di \textbf{Schömig-Markiefka et al. (2023)} \cite{schomig2023deep} in \textit{Nature npj Digital Medicine} affronta il problema della scalabilità. Gli autori propongono una pipeline "vendor-agnostic", sottolineando che l'automazione della segmentazione del tessuto e il controllo qualità sono i pilastri per modelli che funzionino su scanner differenti. Tale prospettiva si allinea perfettamente con l'implementazione del \textbf{Metodo di Otsu} e della \textbf{Varianza del Laplaciano} qui proposta, confermando che la rimozione del rumore e dello sfondo non è solo una fase tecnica, ma un requisito scientifico per la riproducibilità della ricerca.
+
+
+\section{Obiettivi e Sfide della Ricerca} 
+Questo studio mira a sviluppare una pipeline computazionale affidabile per la classificazione automatizzata dei campioni infetti. Durante la progettazione, sono stati affrontati tre aspetti fondamentali della patologia digitale:
+
+\subsection{Caratteristiche delle Whole Slide Images (WSI)}
+Il cuore tecnologico della ricerca risiede nell'utilizzo delle \textit{Whole Slide Images}. A differenza delle immagini citologiche tradizionali, una WSI è un file digitale multi-risoluzione che replica l'intero vetrino istologico. 
+\begin{itemize}
+	\item \textbf{Struttura Piramidale}: Le WSI sono organizzate in livelli (layer); il livello 0 contiene l'immagine alla massima risoluzione (es. 40x), mentre i livelli superiori contengono versioni ridimensionate (downsampled) per facilitare la navigazione.
+	\item \textbf{Risoluzione}: L'analisi di lesioni HPV richiede di scendere a livello di dettaglio cellulare, rendendo necessario il processamento dei livelli a più alto ingrandimento.
+\end{itemize}
+
+\subsection{Gestione del Big Data Istologico} 
+Le WSI presentano dimensioni che superano spesso il gigabyte. Per ovviare a ciò, è stata implementata una tecnica di \textbf{patching}, che suddivide l'immagine piramidale in migliaia di sotto-unità gestibili, garantendo il mantenimento della risoluzione necessaria per l'analisi cellulare sistematica del tessuto.
+
+
+
+\subsection{Standardizzazione e Pre-elaborazione} 
+La variabilità cromatica rappresenta uno dei principali ostacoli alla generalizzazione dei modelli. In questo studio sono stati adottati l'algoritmo di Macenko per la normalizzazione del colore e il metodo di Otsu per la segmentazione automatica del tessuto rispetto allo sfondo, minimizzando il rumore computazionale derivante dalle differenze di scansione o fissaggio.
+
+\subsection{Integrità Scientifica e Bias del Paziente} 
+Un problema spesso sottovalutato è il \textit{Data Leakage}. Se patch dello stesso paziente sono presenti sia nel training che nel test set, il modello potrebbe imparare a riconoscere il paziente specifico anziché la patologia. Per risolvere tale criticità, è stata implementata una \textbf{Cross-Validation a 5 fold stratificata per paziente}, assicurando che i risultati siano rappresentativi della capacità del modello di operare su soggetti mai visti in precedenza.

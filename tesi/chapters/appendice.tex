@@ -1,0 +1,96 @@
+\chapter{Appendici}
+
+\section{Elenco completo delle feature del dataset IBM HR}
+\label{app:features}
+
+La Tabella~\ref{tab:features_complete} riporta le 35 feature originali del dataset IBM HR Employee Attrition, con indicazione del tipo, del range o dei valori ammessi e di una breve descrizione. Le feature contrassegnate con $\dagger$ sono state rimosse in fase di preprocessing in quanto costanti o identificative.
+
+\begin{longtable}{p{4.2cm} c p{3.2cm} p{4.5cm}}
+    \caption{Feature del dataset IBM HR Employee Attrition.}
+    \label{tab:features_complete} \\
+    \toprule
+    Feature & Tipo & Range/Valori & Descrizione \\
+    \midrule
+    \endfirsthead
+    \toprule
+    Feature & Tipo & Range/Valori & Descrizione \\
+    \midrule
+    \endhead
+    \midrule
+    \multicolumn{4}{r}{\textit{Continua nella pagina successiva}} \\
+    \bottomrule
+    \endfoot
+    \bottomrule
+    \endlastfoot
+    Age & int & [18, 60] & Età del dipendente \\
+    Attrition & cat & Yes, No & Variabile target: abbandono \\
+    BusinessTravel & cat & Non-Travel, Rarely, Frequently & Frequenza dei viaggi di lavoro \\
+    DailyRate & int & [102, 1499] & Tariffa giornaliera \\
+    Department & cat & HR, R\&D, Sales & Dipartimento di appartenenza \\
+    DistanceFromHome & int & [1, 29] & Distanza casa-lavoro (km) \\
+    Education & int & [1, 5] & Livello di istruzione (1=sotto diploma, 5=dottorato) \\
+    EducationField & cat & 6 valori & Campo di studi \\
+    EmployeeCount$^\dagger$ & int & 1 & Costante (rimossa) \\
+    EmployeeNumber$^\dagger$ & int & [1, 2068] & Identificativo (rimosso) \\
+    EnvironmentSatisfaction & int & [1, 4] & Soddisfazione ambiente (1=bassa, 4=alta) \\
+    Gender & cat & Female, Male & Genere \\
+    HourlyRate & int & [30, 100] & Tariffa oraria \\
+    JobInvolvement & int & [1, 4] & Coinvolgimento nel lavoro \\
+    JobLevel & int & [1, 5] & Livello gerarchico \\
+    JobRole & cat & 9 valori & Ruolo ricoperto \\
+    JobSatisfaction & int & [1, 4] & Soddisfazione lavorativa \\
+    MaritalStatus & cat & Divorced, Married, Single & Stato civile \\
+    MonthlyIncome & int & [1009, 19999] & Reddito mensile (\$) \\
+    MonthlyRate & int & [2094, 26999] & Tariffa mensile \\
+    NumCompaniesWorked & int & [0, 9] & Numero di aziende precedenti \\
+    Over18$^\dagger$ & cat & Y & Costante (rimossa) \\
+    OverTime & cat & Yes, No & Presenza di straordinari \\
+    PercentSalaryHike & int & [11, 25] & Incremento salariale (\%) \\
+    PerformanceRating & int & [3, 4] & Valutazione della prestazione \\
+    RelationshipSatisfaction & int & [1, 4] & Soddisfazione relazionale \\
+    StandardHours$^\dagger$ & int & 80 & Costante (rimossa) \\
+    StockOptionLevel & int & [0, 3] & Livello di stock option \\
+    TotalWorkingYears & int & [0, 40] & Anni totali di esperienza \\
+    TrainingTimesLastYear & int & [0, 6] & Sessioni di formazione nell'ultimo anno \\
+    WorkLifeBalance & int & [1, 4] & Equilibrio vita-lavoro \\
+    YearsAtCompany & int & [0, 40] & Anni nell'azienda attuale \\
+    YearsInCurrentRole & int & [0, 18] & Anni nel ruolo attuale \\
+    YearsSinceLastPromotion & int & [0, 15] & Anni dall'ultima promozione \\
+    YearsWithCurrManager & int & [0, 17] & Anni con il manager attuale \\
+\end{longtable}
+
+\section{Spazio degli iperparametri e configurazione del modello}
+\label{app:hyperparam}
+
+La Tabella~\ref{tab:hyperparam_full} riporta lo spazio di ricerca completo esplorato dalla \texttt{RandomizedSearchCV} per il modello XGBoost. La configurazione della ricerca è la seguente:
+
+\begin{itemize}
+    \item Numero di iterazioni: 150
+    \item Cross-validation: \texttt{StratifiedKFold} con 5 fold (\texttt{shuffle=True}, \texttt{random\_state=42})
+    \item Metrica di scoring: F1-score sulla classe positiva
+    \item Strategia di bilanciamento selezionata: \texttt{scale\_pos\_weight} (rapporto tra classe negativa e positiva sul train set)
+    \item Seed di riproducibilità: \texttt{random\_state=42}
+\end{itemize}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Spazio di ricerca completo degli iperparametri.}
+    \label{tab:hyperparam_full}
+    \begin{tabular}{lll}
+        \toprule
+        Iperparametro & Valori esplorati & Descrizione \\
+        \midrule
+        \texttt{n\_estimators}     & 100, 200, 300, 500, 700 & Numero di alberi \\
+        \texttt{max\_depth}        & 3, 4, 5, 6, 7, 8 & Profondità massima per albero \\
+        \texttt{learning\_rate}    & 0.01, 0.03, 0.05, 0.08, 0.1, 0.15 & Tasso di apprendimento \\
+        \texttt{subsample}         & 0.6, 0.7, 0.8, 0.9, 1.0 & Frazione di campioni per albero \\
+        \texttt{colsample\_bytree} & 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 & Frazione di feature per albero \\
+        \texttt{min\_child\_weight}& 1, 2, 3, 5, 7 & Peso minimo in un nodo foglia \\
+        \texttt{gamma}             & 0, 0.05, 0.1, 0.2, 0.3 & Riduzione minima di loss per split \\
+        \texttt{reg\_alpha}        & 0, 0.001, 0.01, 0.1, 1.0 & Regolarizzazione L1 \\
+        \texttt{reg\_lambda}       & 0.5, 1.0, 1.5, 2.0, 3.0 & Regolarizzazione L2 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Lo spazio combinatorio totale è pari a $5 \times 6 \times 6 \times 5 \times 6 \times 5 \times 5 \times 5 \times 5 = \num{3375000}$ configurazioni; la ricerca randomizzata ne ha campionate 150, corrispondenti allo 0{,}004\% dello spazio. Il modello finale, selezionato sulla base dell'F1 sul test set, è composto da 500 alberi.

@@ -1,0 +1,403 @@
+\lstset{showstringspaces=false}
+\chapter{Dettagli Implementativi e Codici Sorgente}
+La presente appendice raccoglie i codici sorgente completi sviluppati in linguaggio Python per la pre-elaborazione dell'immagine WSI. Gli script costituiscono la pipeline automatizzata progettata per trasformare la Whole Slide Image originale in un dataset standardizzato, senza  rumore e pronto per l'addestramento della rete neurale.
+
+\section{Estrazione dei Metadati e Generazione Thumbnail}
+Lo script \texttt{task2\_generateJson.py} analizza la WSI tramite la libreria \texttt{openslide}. Il codice estrae le informazioni strutturali fondamentali (livelli di zoom, dimensioni, magnificazione), salvandole in un file JSON, e produce una miniatura a bassa risoluzione (thumbnail) indispensabile per le successive elaborazioni.
+
+\begin{lstlisting}[language=Python, caption={Script completo per l'estrazione dei metadati WSI.}]
+	import openslide
+	import json
+	import glob
+	import os
+	import sys
+	
+	# controllo per capire se è stato inserito un nome che esiste di un file della directory
+	if len(sys.argv) < 2:
+	print("Errore: Devi dirmi quale file cercare!")
+	print("Esempio: python3 task2_finale.py CMU... ad esempio")
+	exit()
+	# se c'è lo salva
+	input_utente = sys.argv[1]
+	
+	files = glob.glob(input_utente)
+	
+	if not files:
+	print(f"ERRORE: Non vedo il file {input_utente} nella cartella!")
+	print("Assicurati che il comando 'cp' abbia funzionato.")
+	exit()
+	
+	filename = files[0]
+	print(f"file trovato: {filename}")
+	print(f"Dimensione: {os.path.getsize(filename) / (1024*1024):.2f} MB")
+	
+	try:
+	# Apre il vetrino
+	slide = openslide.OpenSlide(filename)
+	
+	magnificazione_str = slide.properties.get('openslide.objective-power')
+	
+	# Prepara i dati per il report
+	dati = {
+		"nome_file": filename,
+		"vendor": slide.properties.get('openslide.vendor'),
+		"magnificazione": int(float(magnificazione_str)) if magnificazione_str else "N/A",
+		"livelli_zoom": slide.level_count,
+		"dimensioni_base": slide.dimensions,
+		"nota": "Vetrino caricato con successo in ambiente WSL"
+	}
+	
+	# Salva il JSON con le informazioni presenti in data
+	with open('report_wsi.json', 'w') as f:
+	json.dump(dati, f, indent=4)
+	
+	# Crea la Thumbnail
+	slide.get_thumbnail((512, 512)).save("thumbnail.png")
+	
+	print(f"Creato report_wsi.json e thumbnail.png")
+	
+	
+	slide.close()
+	
+	except Exception as e:
+	print(f"Errore durante l'apertura: {e}")
+\end{lstlisting}
+
+\section{Segmentazione e creazione della maschera (Metodo di Otsu)}
+Il file \texttt{task3\_mask.py} sfrutta la libreria OpenCV per elaborare la miniatura del vetrino. Convertendo l'immagine nello spazio colore HSV rendendola binaria ossia bianco o nero, lo script applica la sogliatura automatica di Otsu sul canale della saturazione, permettendo di creare due macrocategoria, il rumore ossia lo sfondo e il tessuto.
+
+\begin{lstlisting}[language=Python, caption={Script di conversione HSV e applicazione della soglia di Otsu.}]
+	import cv2
+	import numpy as np
+	import matplotlib.pyplot as plt
+	import os
+	
+	image_path = "thumbnail.png"
+	
+	# Verifica se il file esiste fisicamente prima di caricarlo
+	if not os.path.exists(image_path):
+	print(f"ERRORE: Il file '{image_path}' non esiste affatto in {os.getcwd()}")
+	else:
+	img = cv2.imread(image_path)
+	if img is None:
+	print("ERRORE: Il file esiste ma OpenCV non riesce a leggerlo (forse è corrotto o vuoto).")
+	else:
+	print("Successo! Immagine caricata correttamente.")
+	# Converti l'immagine in HSV (Hue, Saturation, Value)
+	# così da poter distinguare il viola del tessuto che ha una Saturazione alta, allo sfondo bianco che ha saturazione zero.
+	hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+	# Prendiamo solo il canale Saturazione
+	saturazione = hsv_image[:, :, 1] 
+	
+	# Soglia automatica (Metodo Otsu)
+	_, mask = cv2.threshold(saturazione, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+	
+	cv2.imwrite("mask_binaria.png", mask)
+	
+	# 5. creazione grafico delle differenze tra png originale e la maschera binaria
+	plt.figure(figsize=(10, 5))
+	
+	# Immagine originale
+	plt.subplot(1, 2, 1)
+	plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+	plt.title("Vetrino Originale (Thumbnail)")
+	plt.axis("off")
+	
+	# Maschera (Bianco = Tessuto, Nero = Sfondo)
+	plt.subplot(1, 2, 2)
+	plt.imshow(mask, cmap="gray")
+	plt.title("Maschera QC (Otsu Threshold)")
+	plt.axis("off")
+	
+	plt.savefig("confronto_qc.png")
+	print("creazione dei file mask_binaria.png e confronto_qc.png")
+\end{lstlisting}
+
+\section{Estrazione Selettiva delle Patch (Tiling)}
+Lo script \texttt{task3\_patching2.py} esegue il mapping proporzionale tra le coordinate della maschera e quelle della slide originale ad alta risoluzione. Attraverso un ciclo iterativo, estrae le patch di dimensione $256 \times 256$ pixel, salvando esclusivamente le porzioni che superano una soglia minima di densità tissutale (75\%).
+
+\begin{lstlisting}[language=Python, caption={Script per il patching proporzionale basato su maschera di densità.}]
+	import openslide
+	import cv2
+	import numpy as np
+	import os
+	import sys
+	import glob
+	
+	# 1. CONFIGURAZIONE
+	PATCH_SIZE = 256        
+	LEVEL_TO_READ = 0       
+	SOGLIA_DENSITA = 191    
+	LIMITATORE = 100        
+	
+	# 2. CARICAMENTO FILE
+	mask_path = 'mask_binaria.png' # Definiamo il percorso mancante
+	mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+	
+	if mask is None:
+	print(f"ERRORE: Non esiste {mask_path}!")
+	sys.exit()
+	
+	if len(sys.argv) < 2:
+	print("Errore: Passami il nome del vetrino (es. CMU-1.tiff)")
+	sys.exit()
+	
+	wsi_path = glob.glob(sys.argv[1])[0]
+	slide = openslide.OpenSlide(wsi_path)
+	
+	# Calcolo scale
+	w_slide, h_slide = slide.dimensions
+	h_mask, w_mask = mask.shape
+	print(f"Vetrino: {w_slide}x{h_slide} | Maschera: {w_mask}x{h_mask}")
+	
+	output_dir = "patches"
+	os.makedirs(output_dir, exist_ok=True)
+	
+	# 3. CICLO DI ESTRAZIONE
+	print("Inizio estrazione...")
+	patches_saved = 0
+	
+	for y in range(0, h_slide - PATCH_SIZE, PATCH_SIZE):
+	for x in range(0, w_slide - PATCH_SIZE, PATCH_SIZE):
+	
+	# Trasformiamo x, y del vetrino gigante in coordinate per la maschera piccola
+	m_x = int(x / w_slide * w_mask)
+	m_y = int(y / h_slide * h_mask)
+	m_size = int(PATCH_SIZE / w_slide * w_mask)
+	
+	# ESTRAIAMO LA PATCH DALLA MASCHERA
+	# Ora x e y esistono perché siamo dentro il ciclo!
+	mask_patch = mask[m_y : m_y + m_size, m_x : m_x + m_size]
+	
+	# CONTROLLO DENSITÀ
+	if mask_patch.size > 0 and np.mean(mask_patch) > SOGLIA_DENSITA:
+	
+	# Se la patch e' "densa", la leggiamo ad alta risoluzione
+	patch = slide.read_region((x, y), LEVEL_TO_READ, (PATCH_SIZE, PATCH_SIZE))
+	patch = patch.convert("RGB")
+	
+	patch_name = f"{output_dir}/patch_{x}_{y}.png"
+	patch.save(patch_name)
+	patches_saved += 1
+	
+	if patches_saved >= LIMITATORE:
+	break
+	if patches_saved >= LIMITATORE:
+	break
+	
+	print(f"\nSalvate {patches_saved} patch dense in '{output_dir}'.")
+\end{lstlisting}
+
+\section{Controllo Qualità: Analisi della Nitidezza}
+Per garantire input validi alla rete neurale, il codice \texttt{task3\_analysis.py} implementa un controllo qualità basato sull'operatore Laplaciano. Lo script calcola la varianza dei pixel per identificare e scartare le immagini sfocate, salvando un report dettagliato in formato CSV tramite la libreria \texttt{pandas}.
+
+\begin{lstlisting}[language=Python, caption={Script per il filtraggio delle patch sfocate tramite Varianza del Laplaciano.}]
+	import cv2
+	import numpy as np
+	import os
+	import glob
+	import pandas as pd
+	import shutil
+	
+	# creazione cartelle per smistare le patch buona da quelle col rumore in sottofondo
+	INPUT_DIR = "patches" # cartella generale
+	OUTPUT_DIR_GOOD = "patches_checked/good" # cartella patch buona
+	OUTPUT_DIR_BAD = "patches_checked/blur" #cartella patch da non utilizzare
+	SOGLIA_BLUR = 100.0  # Sotto questo valore, l'immagine viene considerata sfocata
+	
+	# vedo se queste due cartelle esistono se no le creo e creo anche quelle sottostanti
+	for cartella in [OUTPUT_DIR_GOOD, OUTPUT_DIR_BAD]:
+	if not os.path.exists(cartella):
+	os.makedirs(cartella)
+	
+	# Cerca tutte le immagini png nella cartella patches
+	files_patch = glob.glob(f"{INPUT_DIR}/*.png")
+	
+	if not files_patch:
+	print(f"Errore: La cartella '{INPUT_DIR}' e' vuota o non esiste!")
+	exit()
+	
+	results = []
+	
+	# 2. CICLO DI ANALISI
+	for file_path in files_patch:
+	filename = os.path.basename(file_path)
+	img = cv2.imread(file_path)
+	
+	if img is None:
+	continue
+	
+	# Blur detection (Varianza del Laplaciano)
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	blur_score = cv2.Laplacian(gray, cv2.CV_64F).var()
+	
+	# controllo per capire se è un'immagine buona o no e scelta del percoso della cartella
+	status = "GOOD"
+	if blur_score < SOGLIA_BLUR:
+	status = "BLURRY"
+	destinazione = os.path.join(OUTPUT_DIR_BAD, filename)
+	else:
+	destinazione = os.path.join(OUTPUT_DIR_GOOD, filename)
+	
+	# vede in quale cartella copiare l'immagine appena analizzata
+	shutil.copy(file_path, destinazione)
+	
+	# Salviamo i dati per il report
+	results.append({
+		"filename": filename,
+		"blur_score": round(blur_score, 2),
+		"status": status
+	})
+	
+	# SALVATAGGIO REPORT
+	df = pd.DataFrame(results)
+	csv_name = "report_quality_control.csv"
+	df.to_csv(csv_name, index=False)
+	
+	print("-" * 50)
+	print(f"Report salvato in: '{csv_name}'")
+	print(f"Patch nitide salvate in: '{OUTPUT_DIR_GOOD}'")
+	print(f"Patch sfocate salvate in: '{OUTPUT_DIR_BAD}'")
+	print(f"Statistiche:")
+	print(f"Totale analizzate: {len(df)}")
+	print(f"Accettate (Good): {len(df[df['status']=='GOOD'])}")
+	print(f"Scartate (Blurry): {len(df[df['status']=='BLURRY'])}")
+\end{lstlisting}
+
+\section{Analisi Visiva Normalizzazione Cromatica}
+Lo script \texttt{task3\_normalization.py} è stato sviluppato per validare visivamente il metodo di Macenko. Utilizzando il pacchetto \texttt{torchstain} con backend \texttt{numpy}, separa matematicamente l'Ematossilina dall'Eosina e genera un'immagine di comparazione tra originale, nuclei e normalizzata tramite \texttt{matplotlib}.
+
+\begin{lstlisting}[language=Python, caption={Script per il calcolo e la visualizzazione della standardizzazione cromatica.}]
+	import cv2
+	import matplotlib.pyplot as plt
+	import glob
+	import os
+	import sys
+	
+	# setup libreria in quanto a volte mi da errori
+	try:
+	from torchstain.normalizers import MacenkoNormalizer
+	except ImportError:
+	try:
+	import torchstain
+	MacenkoNormalizer = torchstain.normalizers.MacenkoNormalizer
+	except Exception as e:
+	print("Errore critico libreria torchstain.")
+	sys.exit()
+	
+	# cerca una patch nella cartella delle patch buone
+	INPUT_DIR = "patches_checked/good"
+	files = glob.glob(f"{INPUT_DIR}/*.png")
+	if not files:
+	print(f"Errore: Nessuna patch trovata in '{INPUT_DIR}'")
+	exit()
+	
+	img_path = files[0]
+	
+	# Leggiamo l'immagine come RGB e non BGR
+	original_img = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
+	
+	try:
+	
+	normalizer = MacenkoNormalizer(backend='numpy')
+	
+	# La funzione restituisce: (ImmagineNorm, MatriceH, MatriceE)
+	norm_img, H_channel, E_channel = normalizer.normalize(I=original_img, stains=True)
+	
+	fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+	
+	axes[0].imshow(original_img)
+	axes[0].set_title("1. Originale")
+	axes[0].axis('off')
+	
+	axes[1].imshow(H_channel, cmap='gray')
+	axes[1].set_title("2. Ematossilina (Nuclei)")
+	axes[1].axis('off')
+	
+	axes[2].imshow(norm_img)
+	axes[2].set_title("3. Normalizzata (Macenko)")
+	axes[2].axis('off')
+	
+	output_file = "confronto_normalizzazione_lib.png"
+	plt.savefig(output_file)
+	print(f"\n Grafico salvato in: '{output_file}'")
+	
+	
+	except Exception as e:
+	print(f"\nErrore durante il calcolo: {e}")
+\end{lstlisting}
+
+\section{Pipeline Finale Automatica}
+Il file conclusivo \texttt{task3\_final\_pipeline.py} ingloba le fasi di controllo qualità e normalizzazione in un unico flusso iterativo. Analizza le patch grezze, scarta in automatico quelle non idonee basandosi sul Laplaciano, e converte quelle valide tramite l'algoritmo di Macenko, salvando il dataset finale pronto per l'addestramento della ResNet50.
+
+\begin{lstlisting}[language=Python, caption={Pipeline unificata per filtraggio blur e normalizzazione Macenko a livello di dataset.}]
+	import cv2
+	import numpy as np
+	import os
+	import glob
+	import sys
+	import shutil
+	
+	# --- CONFIGURAZIONE ---
+	INPUT_DIR = "patches"              # Dove sono le immagini grezze
+	OUTPUT_DIR = "dataset_ready"       # Dove mettiamo quelle pronte per l'AI
+	SOGLIA_BLUR = 100.0                # Soglia nitidezza
+	
+	# Setup Normalizzatore
+	try:
+	from torchstain.normalizers import MacenkoNormalizer
+	normalizer = MacenkoNormalizer(backend='numpy') 
+	except:
+	import torchstain
+	normalizer = torchstain.normalizers.MacenkoNormalizer(backend='numpy')
+	
+	# Crea cartella output
+	if not os.path.exists(OUTPUT_DIR):
+	os.makedirs(OUTPUT_DIR)
+	
+	# Leggi file
+	files = glob.glob(f"{INPUT_DIR}/*.png")
+	
+	count_saved = 0
+	count_blur = 0
+	count_error = 0
+	
+	for i, file_path in enumerate(files):
+	filename = os.path.basename(file_path)
+	
+	# Caricamento
+	img = cv2.imread(file_path)
+	if img is None: continue
+	
+	# Blur check 
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	score = cv2.Laplacian(gray, cv2.CV_64F).var()
+	
+	if score < SOGLIA_BLUR:
+	count_blur += 1
+	continue # Salta alla prossima
+	
+	# 4 normalizzazione Macenko
+	try:
+	# Converti BGR -> RGB per Macenko
+	img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+	
+	# Normalizza
+	norm_img, _, _ = normalizer.normalize(I=img_rgb, stains=True)
+	
+	# Converti RGB -> BGR per salvare con OpenCV
+	final_img = cv2.cvtColor(norm_img, cv2.COLOR_RGB2BGR)
+	
+	# Salvataggio
+	save_path = os.path.join(OUTPUT_DIR, filename)
+	cv2.imwrite(save_path, final_img)
+	count_saved += 1
+	
+	except Exception as e:
+	print(f"Errore normalizzazione su {filename}: {e}")
+	count_error += 1
+	
+	# Barra di progresso semplice
+	sys.stdout.write(f"\r   Progress: {i+1}/{len(files)} | âœ… Salvate: {count_saved} | ðŸ—‘ï¸  Blur: {count_blur}")
+	sys.stdout.flush()
+\end{lstlisting}

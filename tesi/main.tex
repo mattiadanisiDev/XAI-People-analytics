@@ -1,0 +1,84 @@
+\documentclass[12pt,a4paper]{report}
+
+% ─── Encoding & Language ──────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+
+% ─── Typography & Layout ──────────────────────────────────────────────────────
+\usepackage[top=3cm, bottom=3cm, left=3.5cm, right=3cm]{geometry}
+\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+
+% ─── Math & Figures ───────────────────────────────────────────────────────────
+\usepackage{amsmath}
+\usepackage{csquotes}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{caption}
+
+% ─── Citations (authortitle, biber backend) ───────────────────────────────────
+\usepackage[style=authortitle, backend=biber, sorting=none]{biblatex}
+\addbibresource{biblio.bib}
+
+% ─── Hyperlinks (load last) ───────────────────────────────────────────────────
+\usepackage[hidelinks]{hyperref}
+
+% ─────────────────────────────────────────────────────────────────────────────
+
+\usepackage{uninafrontespizio}
+
+% ─── Frontespizio setup ─────────────────────────────────────────────────────
+\Logo{media/Logo-Parthenope.jpg}
+\LogoPosition{below-uni}
+\LogoWidth{6cm}
+\Universita{Università degli Studi di Napoli Parthenope}
+\Facolta{Scuola Interdipartimentale delle Scienze, dell'Ingegneria e della Salute}
+\Dipartimento{Dipartimento di Scienze e Tecnologie}
+\CorsoDiLaurea{Corso di Laurea Triennale in Informatica}
+\Titolo{EXPLAINABLE AI PER IL PEOPLE ANALYTICS: METODI E FRAMEWORK PER MODELLI INTERPRETABILI}
+\Relatore{Prof. Emanuel Di Nardo}
+\Correlatore{Prof. Pasquale De Luca}
+\Candidato{Mattia Danisi}
+\Matricola{Matricola: 0124002281}
+\AnnoAccademico{ANNO ACCADEMICO 2025/2026}
+
+\begin{document}
+
+% ── Front matter (roman page numbers) ────────────────────────────────────────
+\pagenumbering{roman}
+
+\makefrontpage
+
+\input{chapters/dedica}
+\clearpage
+
+\input{chapters/sommario}
+\clearpage
+
+\tableofcontents
+\clearpage
+
+% ── Main matter (arabic page numbers) ────────────────────────────────────────
+\pagenumbering{arabic}
+
+\input{chapters/1_introduzione}
+\input{chapters/2_quadro_teorico}
+\input{chapters/3_caso_studio}
+\input{chapters/4_discussione}
+\input{chapters/5_conclusioni}
+
+% ── Appendix ─────────────────────────────────────────────────────────────────
+\appendix
+\input{chapters/appendice}
+
+% ── Back matter ───────────────────────────────────────────────────────────────
+\printbibliography[heading=bibintoc, title={Bibliografia}]
+
+\input{chapters/grazie}
+
+\end{document}
